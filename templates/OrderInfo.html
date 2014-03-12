@@ -1,0 +1,15 @@
+<div class="orderinfo" style="display: none;">
+    <ul>
+        {foreach $fields as $field}
+        {if $field.value}
+        <li><i class="{$field.icon}"></i>{$field.value}</li>
+        {/if}
+        {/foreach}
+    </ul>
+</div>
+
+<script>
+    $(function() {
+        $('.profile .details ul').append($('.orderinfo ul').html());
+    });
+</script>

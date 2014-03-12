@@ -1,0 +1,162 @@
+<script src="{$wa_url}wa-content/js/jquery-ui/jquery.ui.sortable.min.js"></script>
+<style type="text/css">   
+    ul.orderinfo_list li{
+        list-style: none;
+        padding: 0px;
+        cursor: move;
+        padding: 5px;
+        margin: 3px 0px;
+        padding-left: 25px; 
+        width: 240px;
+        border-radius:5px;
+        -webkit-border-radius:5px;
+        -moz-border-radius:5px;
+        -khtml-border-radius:5px;
+        position: relative;
+    }
+    .orderinfo_list li span {
+        position: absolute; 
+        left: 5px;
+    }
+    .remove-field{
+        right: 0px;
+        position: absolute;
+    }
+    .add-field{
+        margin-left: 10px;
+    }
+
+    #orderinfo_table{
+        margin-top: 10px;
+    }
+    #orderinfo_table td{
+        padding: 5px 10px;
+    }
+    .icons{
+        max-width: 300px;
+    }
+    .icons-field{
+        display: none;
+    }
+
+</style>
+<h1>Информация в заказе</h1>
+
+<select class="all-fields" style="display:none;">
+    {foreach $fields as $field}
+    <option value="{$field->getId()}">{if $field->getId()=='name'}Полное имя{else}{$field->getName()}{/if}</option>
+    {/foreach}
+    <optgroup label="Адрес">
+        {foreach from=$address_fields item=address}
+        <option value="address.{$address->getId()}">{$address->getName()}</option>
+        {/foreach}
+    </optgroup>
+</select>
+
+
+<div class="tpl-icons" style="display: none;">
+    {foreach $icons as $icon}
+    <a href="#"><i class="{$icon}"></i></a>
+    {/foreach}
+</div>
+
+
+
+<div class="fields form">
+    <form action="?plugin=orderinfo&action=save" method="post" id="plugins-settings-form">
+        {$wa->csrf()}
+
+
+        <div class="field">
+            <div class="name">
+                Статус плагина
+            </div>
+            <div class="value">
+                <select name="shop_orderinfo[status]">
+                    <option {if $settings.status == 1} selected="selected"{/if} value="1">Включен</option>
+                    <option {if $settings.status == 0} selected="selected"{/if} value="0">Выключен</option>
+                </select>
+            </div>
+        </div>
+
+        <br/><br/>
+        <div>Дополнительная информация о покупателе:</div>
+        <div class="orderinfo_container">
+            <ul class="orderinfo_list">
+                {foreach from=$selected_fields key=key item=selected_field}
+                <li class="ui-state-default">
+                    <span class="ui-icon ui-icon-arrowthick-2-n-s"></span>
+                    <input class="field_icons" type="hidden" name="shop_orderinfo[field_icons][]" value="{$selected_field_icons[$key]}"/>
+                    
+                    <a class="change_icon" href="#"><i class="{$selected_field_icons[$key]}"></i></a>
+                    <select name="shop_orderinfo[fields][]">
+                        {foreach from=$fields item=field}
+                        <option {if $field->getId()==$selected_field}selected="selected"{/if} value="{$field->getId()}">{if $field->getId()=='name'}Полное имя{else}{$field->getName()}{/if}</option>
+                        {/foreach}
+                        <optgroup label="Адрес">
+                            {foreach from=$address_fields item=address}
+                            <option {if $selected_field=="address.`$address->getId()`"}selected="selected"{/if} value="address.{$address->getId()}">{$address->getName()}</option>
+                            {/foreach}
+                        </optgroup>
+                    </select>
+
+                    <a class="remove-field" href="#"><i class="icon16 cross"></i></a>
+
+                </li>
+                {/foreach}
+            </ul>
+        </div>
+
+
+
+
+        <div class="field">
+            <a class="add-field" href="#"><i class="icon16 add"></i>Добавить поле</a>
+        </div>
+
+
+        <div class="field">
+            <div class="value submit">
+                <input type="submit" class="button green" value="Сохранить">
+                <span id="plugins-settings-form-status" style="display:none">
+                    <i style="vertical-align:middle" class="icon16 yes"></i> [`Saved`]
+                </span>
+            </div>
+        </div>
+    </form>
+</div>
+<script type="text/javascript">
+
+    $(function() {
+        $('.orderinfo_list').sortable();
+        $('.remove-field').live('click', function() {
+            $(this).closest('li').remove();
+            return false;
+        });
+
+        $('.change_icon').live('click', function() {
+            $('.icons').remove();
+            $(this).closest('li').append('<div class="icons">' + $('.tpl-icons').html() + '</div>');
+            return false;
+        });
+        $('.icons a').live('click', function() {
+            $(this).closest('li').find('.change_icon').html($(this).html());
+            $(this).closest('li').find('.field_icons').val($(this).find('i').attr('class'));
+            $(this).closest('.icons').remove();
+            return false;
+        });
+
+        $('.add-field').click(function() {
+            $('.orderinfo_list').append('<li class="ui-state-default">\
+                <span class="ui-icon ui-icon-arrowthick-2-n-s"></span>\
+                <input class="field_icons" type="hidden" name="shop_orderinfo[field_icons][]" value="{$def_icon}"/>\
+                <a class="change_icon" href="#"><i class="{$def_icon}"></i></a>\
+                <select name="shop_orderinfo[fields][]">' + $('.all-fields').html() + '</select>\
+                <a class="remove-field" href="#"><i class="icon16 cross"></i></a>\
+            </li>');
+            return false;
+        });
+
+    });
+
+</script>
