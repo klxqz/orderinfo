@@ -8,7 +8,7 @@ return array(
     'name' => 'Информация в заказе',
     'description' => 'Выводит дополнительную информацию в заказе',
     'vendor' => '985310',
-    'version' => '1.0.0',
+    'version' => '1.0.1',
     'img' => 'img/orderinfo.png',
     'frontend' => true,
     'shop_settings' => true,

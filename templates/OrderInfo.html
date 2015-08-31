@@ -1,15 +1,22 @@
 <div class="orderinfo" style="display: none;">
     <ul>
         {foreach $fields as $field}
-        {if $field.value}
-        <li><i class="{$field.icon}"></i>{$field.value}</li>
-        {/if}
+            {if $field.value}
+                <li class="orderinfo-field">
+                    {if !empty($field.icon)}
+                        <i class="{$field.icon}"></i>
+                    {/if}
+                    {$field.value}
+                </li>
+            {/if}
         {/foreach}
     </ul>
 </div>
 
 <script>
-    $(function() {
-        $('.profile .details ul').append($('.orderinfo ul').html());
+    $(function () {
+        if($('.profile .details ul li.orderinfo-field').length == 0) {
+            $('.profile .details ul').append($('.orderinfo ul').html());
+        }
     });
 </script>
